@@ -2,32 +2,28 @@ import React from "react";
 import Square from "./Square";
 import "../index.css";
 
-class Board extends React.Component {
-    constructor(props) {
-        super(props);
+function Board(props) {
+    const renderSquare = (i) => {
+        return <Square key={i} isCurrentSquare={isCurrentSquare(i)} isWinSquare={isWinSquare(i)} value={props.squares[i]} onClick={() => props.onClick(i)} />;
     }
-    renderSquare(i) {
-        return <Square key={i} isCurrentSquare={this.isCurrentSquare(i)} isWinSquare={this.isWinSquare(i)} value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
+    const isWinSquare = (i) => {
+        return props.line && props.line.indexOf(i) >= 0;
     }
-    isWinSquare(i) {
-        return this.props.line && this.props.line.indexOf(i) >= 0;
+    const isCurrentSquare = (i) => {
+        return i === ((props.currentCoord.Y - 1) * (props.size || 3) + (props.currentCoord.X - 1));
     }
-    isCurrentSquare(i) {
-        return i === ((this.props.currentCoord.Y - 1) * (this.props.size || 3) + (this.props.currentCoord.X - 1));
-    }
-    render() {
-        const boardSize = this.props.size || 5;
-        let squares = [];
-        for (let i = 0; i < boardSize; i++) {
-            let row = [];
-            for (let j = 0; j < boardSize; j++) {
-                row.push(this.renderSquare(i * boardSize + j));
-            }
-            squares.push(<div key={i} className="board-row">{row}</div>);
+    const boardSize = props.size || 5;
+    let squares = [];
+    for (let i = 0; i < boardSize; i++) {
+        let row = [];
+        for (let j = 0; j < boardSize; j++) {
+            row.push(renderSquare(i * boardSize + j));
         }
-        return (
-            <div>{squares}</div>
-        );
+        squares.push(<div key={i} className="board-row">{row}</div>);
     }
+    return (
+        <div>{squares}</div>
+    );
+
 }
 export default Board;
