@@ -18,17 +18,17 @@ function Game(props) {
     const [size, setSize] = useState(5);
 
     const handleClick = (i) => {
-        const _history = history.slice(0, stepNumber + 1);
-        const _current = _history[stepNumber];
-        const _squares = _current.squares.slice();
-        const _winInfo = calculateWinner(_squares, size);
-        if (_winInfo.winner || _squares[i] || _winInfo.isDraw) {
+        const currentHistory = history.slice(0, stepNumber + 1);
+        const currentGame = currentHistory[stepNumber];
+        const squares = currentGame.squares.slice();
+        const winInfo = calculateWinner(squares, size);
+        if (winInfo.winner || squares[i] || winInfo.isDraw) {
             return;
         }
-        _squares[i] = isXNext ? 'X' : 'O';
+        squares[i] = isXNext ? 'X' : 'O';
 
-        setHistory(_history.concat([{
-            squares: _squares,
+        setHistory(currentHistory.concat([{
+            squares: squares,
             coord: {
                 X: i % size + 1,
                 Y: parseInt(i / size + 1),
@@ -36,7 +36,7 @@ function Game(props) {
             isXTurn: isXNext
         }]));
 
-        setStepNumber(_history.length);
+        setStepNumber(currentHistory.length);
         setIsXNext(!isXNext);
     }
 
@@ -72,20 +72,20 @@ function Game(props) {
         setSize(size);
     }
 
-    const _history = history;
-    const _current = _history[stepNumber];
-    const _winInfo = calculateWinner(_current.squares, size);
-    const _winner = _winInfo.winner;
-    let _status;
-    if (!_winner && !_winInfo.isDraw) {
-        _status = 'Next player: ' + (isXNext ? 'X' : 'O');
-    } else if (!_winner && _winInfo.isDraw) {
-        _status = 'Draw';
+    const currentHistory = history;
+    const currentGame = currentHistory[stepNumber];
+    const winInfo = calculateWinner(currentGame.squares, size);
+    const winner = winInfo.winner;
+    let status;
+    if (!winner && !winInfo.isDraw) {
+        status = 'Next player: ' + (isXNext ? 'X' : 'O');
+    } else if (!winner && winInfo.isDraw) {
+        status = 'Draw';
     } else {
-        _status = 'Winner: ' + _winner;
+        status = 'Winner: ' + winner;
     }
     const _isSortAsc = sortAsc;
-    const _moves = _history.map((step, move) => {
+    const _moves = currentHistory.map((step, move) => {
         if (!move) {
             return
         }
@@ -116,10 +116,10 @@ function Game(props) {
             </div>
             <div className="game">
                 <div className="game-board">
-                    <Board currentCoord={_current.coord} size={size} line={_winInfo.line} squares={_current.squares} onClick={(i) => handleClick(i)} />
+                    <Board currentCoord={currentGame.coord} size={size} line={winInfo.line} squares={currentGame.squares} onClick={(i) => handleClick(i)} />
                 </div>
                 <div className="game-info">
-                    <p>{_status}</p>
+                    <p>{status}</p>
                     <button onClick={() => reverseMovesOrder()}>Toggle sort {_isSortAsc ? 'ascending' : 'descending'}</button>
                     {_moves.length > 1 && <p>Moves</p>}
                     <ol reversed={_isSortAsc}>{_movesShow}</ol>
